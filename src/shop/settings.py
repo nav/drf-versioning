@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-s#9=wmg_a)+me)gbw5jg@mb9a-(l79ybgeb808podvob923lxp"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-s#9=wmg_a)+me)gbw5jg@mb9a-(l79ybgeb808podvob923lxp"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -133,8 +136,10 @@ INSTALLED_APPS += [
     "catalogue",
 ]
 
+MIDDLEWARE += ("api.middleware.version_middleware",)
+
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_RENDERER_CLASSES": ("api.renderer.CustomRenderer",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 

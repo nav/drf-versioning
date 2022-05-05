@@ -1,35 +1,30 @@
-import typing
 import json
-from django.utils.module_loading import import_string
 from django import http
-from api import config
+from api import versions
+
+API_VERSION_HEADER = "X-API-VERSION"
 
 
 def version_middleware(get_response):
-    # One-time configuration and initialization.
-    def gather_transformations(version):
-        transformations: typing.List[str] = []
-        for _version, _transformations in config.API_VERSIONS.items():
-            assert isinstance(_transformations, list)
-            transformations.extend(_transformations)
-            if _version == version:
-                break
+    def gather_transformations(version: versions.Version):
+        transformations = []
 
-        return [import_string(t) for t in transformations]
+        while version is not None:
+            transformations.extend(version.transformations)
+            version = version.next
+
+        return transformations
 
     def middleware(request):
-        api_version = "stable"
-
         if not request.path.startswith("/api"):
             response = get_response(request)
             return response
 
-        if config.API_VERSION_HEADER in request.headers:
-            api_version = request.headers[config.API_VERSION_HEADER]
-            if api_version not in config.API_VERSIONS:
-                raise http.HTTPException(
-                    status_code=400, detail="Invalid version requested"
-                )
+        if API_VERSION_HEADER not in request.headers:
+            raise ValueError("API Version not specified.")
+
+        api_version = versions.Version.by_name(request.headers[API_VERSION_HEADER])
+        setattr(request, "api_version", api_version.name)
 
         transformations = gather_transformations(api_version)
 
@@ -37,7 +32,7 @@ def version_middleware(get_response):
         reversed_transformations = reversed(transformations)
         request_body = request.body
 
-        if request_body:
+        if request_body and reversed_transformations:
             request_body = json.loads(request_body)
             for TransformationClass in reversed_transformations:
                 transformation = TransformationClass(api_version)
@@ -46,7 +41,7 @@ def version_middleware(get_response):
                 )
 
             request_body = json.dumps(request_body).encode()
-            request.scope["body"] = request_body
+            request._body = request_body
 
         response = get_response(request)
 

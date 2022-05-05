@@ -1,2 +1,3 @@
-# drf-versioning
-API Versioning with Django Rest Framework
+# API Versioning with Django Rest Framework
+
+Demo of API Versioning with Django Rest Framework

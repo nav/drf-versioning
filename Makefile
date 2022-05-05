@@ -8,14 +8,10 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 RUNTIME_ENV?=dev
 
 ifeq (manage,$(firstword $(MAKECMDGOALS)))
-  # use the rest as arguments for "test"
   RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  # ...and turn them into do-nothing targets
   $(eval $(RUN_ARGS):;@:)
 endif
 
-# When adding a phony target, add to the list below. These are namespaced by
-# their scope.
 .PHONY: help install run repl test
 .PHONY: ide/emacs
 

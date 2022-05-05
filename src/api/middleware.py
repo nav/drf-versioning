@@ -1,6 +1,6 @@
 import typing
 import json
-import importlib
+from django.utils.module_loading import import_string
 from django import http
 from api import config
 
@@ -14,8 +14,8 @@ def version_middleware(get_response):
             transformations.extend(_transformations)
             if _version == version:
                 break
-        transformations_module = importlib.import_module("api.transformations")
-        return [getattr(transformations_module, t) for t in transformations]
+
+        return [import_string(t) for t in transformations]
 
     def middleware(request):
         api_version = "stable"

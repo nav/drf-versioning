@@ -3,13 +3,16 @@ from rest_framework import renderers
 
 class JSONRenderer(renderers.JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        status_code = renderer_context["response"].status_code
+        request = renderer_context.get("request")
         response = {
-            "status": "success",
-            "code": status_code,
             "data": data,
+            "metadata": {
+                "status": "success",
+                "api_version": request.api_version,
+                "deprecations": [],
+                "removals": [],
+            },
         }
-
         return super(JSONRenderer, self).render(
-            response, accepted_media_type, renderer_context
+            response, accepted_media_type=None, renderer_context=None
         )

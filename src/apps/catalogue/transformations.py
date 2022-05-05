@@ -1,7 +1,6 @@
 import re
 import typing
 from api import transformations
-from api import versions
 
 
 class RenameProductSKUToName(transformations.BaseTransformation):
@@ -39,6 +38,3 @@ class RenameProductSKUToName(transformations.BaseTransformation):
             )
         )
         return response_body
-
-
-versions.v2.register_transformation(RenameProductSKUToName)

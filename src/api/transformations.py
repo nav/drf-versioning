@@ -5,14 +5,19 @@ import abc
 
 class BaseTransformation(abc.ABC):
     API_VERSION_KEY = "api_version"
-    DEPRECATION_WARNINGS_KEY = "deprecation_warnings"
+    DEPRECATION_WARNINGS_KEY = "deprecations"
+    REMOVAL_NOTICES_KEY = "removals"
 
     def __init__(self, api_version: str):
         self.api_version = api_version
+        self.removal_notices = []
         self.deprecation_warnings = []
 
     def set_deprecation_warning(self, warning):
         self.deprecation_warnings.append(warning)
+
+    def set_removal_notice(self, notice):
+        self.removal_notices.append(notice)
 
     @abc.abstractmethod
     def process_request_body(self, request_body):
@@ -53,10 +58,13 @@ class BaseTransformation(abc.ABC):
             return response_body
 
         response_body = self.process_response_body(response_body)
-        response_body[self.API_VERSION_KEY] = self.api_version
+        metadata = response_body.get("metadata", dict())
 
-        # Insert deprecation warnings
-        if self.DEPRECATION_WARNINGS_KEY not in response_body:
-            response_body[self.DEPRECATION_WARNINGS_KEY] = self.deprecation_warnings
+        metadata[self.API_VERSION_KEY] = self.api_version.name
 
+        # Insert deprecation warnings and removal notices
+        metadata[self.DEPRECATION_WARNINGS_KEY] = self.deprecation_warnings
+        metadata[self.REMOVAL_NOTICES_KEY] = self.removal_notices
+
+        response_body["metadata"] = metadata
         return response_body

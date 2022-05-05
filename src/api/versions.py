@@ -1,5 +1,4 @@
 import typing
-from django import http
 from api import transformations
 
 _versions = []
@@ -20,7 +19,6 @@ class Version:
         if transformation in self.transformations:
             return
         self.transformations.append(transformation)
-        print(self.transformations)
 
     @classmethod
     def by_name(cls, name):
@@ -32,10 +30,6 @@ class Version:
     @classmethod
     def get_stable(cls):
         return _versions[0]
-
-    @classmethod
-    def get_root(cls):
-        return _versions[-1]
 
 
 v2 = Version(name="v2")

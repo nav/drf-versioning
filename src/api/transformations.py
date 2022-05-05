@@ -15,13 +15,13 @@ class BaseTransformation(abc.ABC):
         self.deprecation_warnings.append(warning)
 
     @abc.abstractmethod
-    def process_request_body(self):
+    def process_request_body(self, request_body):
         raise NotImplementedError(
             "Method to produce request body has not been implemented."
         )
 
     @abc.abstractmethod
-    def process_response_body(self):
+    def process_response_body(self, response_body):
         raise NotImplementedError(
             "Method to produce response body has not been implemented."
         )

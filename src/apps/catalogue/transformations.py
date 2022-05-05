@@ -1,9 +1,10 @@
 import re
 import typing
-from api.transformations import BaseTransformation
+from api import transformations
+from api import versions
 
 
-class RenameProductSKUToName(BaseTransformation):
+class RenameProductSKUToName(transformations.BaseTransformation):
     endpoints = [re.compile("/api/products.*")]
 
     def process_request_body(self, request_body: typing.Union[dict, list]):
@@ -38,3 +39,6 @@ class RenameProductSKUToName(BaseTransformation):
             )
         )
         return response_body
+
+
+versions.v2.register_transformation(RenameProductSKUToName)

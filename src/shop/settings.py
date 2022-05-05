@@ -136,10 +136,10 @@ INSTALLED_APPS += [
     "catalogue",
 ]
 
-MIDDLEWARE += ("api.middleware.version_middleware",)
+MIDDLEWARE += ("api.middlewares.version_middleware",)
 
 REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ("api.renderer.CustomRenderer",),
+    "DEFAULT_RENDERER_CLASSES": ("api.renderers.JSONRenderer",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 

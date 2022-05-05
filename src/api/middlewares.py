@@ -1,35 +1,32 @@
 import typing
 import json
-from django.utils.module_loading import import_string
 from django import http
 from api import config
+from api import versions
 
 
 def version_middleware(get_response):
-    # One-time configuration and initialization.
-    def gather_transformations(version):
-        transformations: typing.List[str] = []
-        for _version, _transformations in config.API_VERSIONS.items():
-            assert isinstance(_transformations, list)
-            transformations.extend(_transformations)
-            if _version == version:
-                break
+    def gather_transformations(version: versions.Version):
+        transformations = []
 
-        return [import_string(t) for t in transformations]
+        version = versions.Version.get_root()
+        while version is not None:
+            transformations.extend(version.transformations)
+            version = version.next
+
+        return transformations
 
     def middleware(request):
-        api_version = "stable"
+        api_version = versions.Version.get_stable()
 
         if not request.path.startswith("/api"):
             response = get_response(request)
             return response
 
         if config.API_VERSION_HEADER in request.headers:
-            api_version = request.headers[config.API_VERSION_HEADER]
-            if api_version not in config.API_VERSIONS:
-                raise http.HTTPException(
-                    status_code=400, detail="Invalid version requested"
-                )
+            api_version = versions.Version.by_name(
+                request.headers[config.API_VERSION_HEADER]
+            )
 
         transformations = gather_transformations(api_version)
 

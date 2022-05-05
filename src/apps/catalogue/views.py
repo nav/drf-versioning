@@ -6,7 +6,9 @@ from catalogue import models
 
 class ProductViewSet(
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()

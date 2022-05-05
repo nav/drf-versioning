@@ -31,5 +31,5 @@ urlpatterns = [
         spectacular_views.SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
-    path("api/products", include(catalogue_urls.router.urls)),
+    path("api/products/", include(catalogue_urls.router.urls)),
 ]

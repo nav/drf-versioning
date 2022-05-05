@@ -25,7 +25,7 @@ install: 				## Install dependencies
 	@nix-shell --pure --command "pre-commit install"
 
 run: 					## Run application
-	@nix-shell --command "cd src && poetry run python manage.py runserver 0.0.0.0:${PORT}"
+	@nix-shell --command "cd src && poetry run python manage.py runserver 127.0.0.1:${PORT}"
 
 shell:				## Start a Python shell
 	@nix-shell --command "cd src && poetry run python"

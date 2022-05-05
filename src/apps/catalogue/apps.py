@@ -9,3 +9,4 @@ class CatalogueConfig(AppConfig):
 
     def ready(self):
         versions.v1.register_transformation(transformations.RenameProductSKUToName)
+        versions.v2.register_transformation(transformations.RenameProductNameToTitle)

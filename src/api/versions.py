@@ -32,5 +32,6 @@ class Version:
         return _versions[0]
 
 
-v2 = Version(name="v2")
+v3 = Version(name="v3")
+v2 = Version(name="v2", next=v3)
 v1 = Version(name="v1", next=v2)

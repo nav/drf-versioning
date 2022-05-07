@@ -7,7 +7,7 @@ class JSONRenderer(renderers.JSONRenderer):
         response = {
             "data": data,
             "metadata": {
-                "api_version": request.api_version,
+                "api_version": request.api_version.name,
                 "deprecations": [],
                 "removals": [],
             },

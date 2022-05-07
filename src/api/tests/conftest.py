@@ -1,32 +1,22 @@
 import re
 import pytest
 from api import versions
-from api import transformations as api_transformations
-from catalogue import transformations
-
-
-@pytest.fixture
-def rename_field_transformation():
-    return transformations.RenameProductSKUToName
+from api import transformations
 
 
 @pytest.fixture
 def v1():
-    return versions.Version(name="v1", transformations=[])
+    return versions.v1
 
 
 @pytest.fixture
-def v2(v1, rename_field_transformation):
-    return versions.Version(
-        name="v2",
-        transformations=[rename_field_transformation],
-        prev=v1,
-    )
+def v2():
+    return versions.v2
 
 
 @pytest.fixture
 def transformation():
-    class ChangeDataType(api_transformations.BaseTransformation):
+    class ChangeDataType(transformations.BaseTransformation):
         """Changes is_active int (0,1) to boolean and vice-versa."""
 
         endpoints = [re.compile("/api/products")]

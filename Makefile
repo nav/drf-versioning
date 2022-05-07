@@ -22,7 +22,6 @@ help:				## Show this help
 
 install: 				## Install dependencies
 	@nix-shell --pure --command "poetry install"
-	@nix-shell --pure --command "pre-commit install"
 
 run: 					## Run application
 	@nix-shell --command "cd src && poetry run python manage.py runserver 127.0.0.1:${PORT}"

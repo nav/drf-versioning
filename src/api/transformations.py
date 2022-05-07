@@ -1,15 +1,12 @@
 import typing
-
 import abc
 
 
 class BaseTransformation(abc.ABC):
-    API_VERSION_KEY = "api_version"
     DEPRECATION_WARNINGS_KEY = "deprecations"
     REMOVAL_NOTICES_KEY = "removals"
 
-    def __init__(self, api_version: str):
-        self.api_version = api_version
+    def __init__(self):
         self.removal_notices = []
         self.deprecation_warnings = []
 
@@ -35,7 +32,8 @@ class BaseTransformation(abc.ABC):
         self,
         endpoint: str,
         request_body: typing.Union[
-            typing.Dict[str, typing.Any], typing.List[typing.Dict[str, typing.Any]]
+            typing.Dict[str, typing.Any],
+            typing.List[typing.Dict[str, typing.Any]],
         ],
     ):
 
@@ -51,16 +49,11 @@ class BaseTransformation(abc.ABC):
             typing.Dict[str, typing.Any], typing.List[typing.Dict[str, typing.Any]]
         ],
     ):
-        if (
-            not any(pat.match(endpoint) for pat in self.endpoints)
-            or "data" not in response_body
-        ):
+        if not any(pat.match(endpoint) for pat in self.endpoints):
             return response_body
 
         response_body = self.process_response_body(response_body)
         metadata = response_body.get("metadata", dict())
-
-        metadata[self.API_VERSION_KEY] = self.api_version.name
 
         # Insert deprecation warnings and removal notices
         metadata[self.DEPRECATION_WARNINGS_KEY] = self.deprecation_warnings

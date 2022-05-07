@@ -10,7 +10,7 @@ pkgs.mkShell {
     export PYTHONPATH=$(pwd)/src:$(pwd)/src/apps:$PYTHONPATH
     export DJANGO_SETTINGS_MODULE=shop.settings
     set -o allexport
-    source .env
+    source .env || true
     set +o allexport
   '';
 }

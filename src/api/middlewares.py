@@ -13,7 +13,6 @@ def version_middleware(get_response):
             transformations.extend(current_version.transformations)
             current_version = current_version.prev
         transformations.extend(version.transformations)
-
         return transformations
 
     def middleware(request):
@@ -40,9 +39,10 @@ def version_middleware(get_response):
             request._body = request_body
 
         response = get_response(request)
-        if (
-            status.HTTP_200_OK < response.status_code
-            or response.status_code >= status.HTTP_300_MULTIPLE_CHOICES
+
+        if not (
+            status.HTTP_200_OK <= response.status_code
+            and response.status_code < status.HTTP_300_MULTIPLE_CHOICES
         ):
             return response
 
